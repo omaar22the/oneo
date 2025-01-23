@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>For you.</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Marhey', cursive;
+            background: #f4e9d8;
+            color: #5c4033;
+            overflow-x: hidden;
+        }
+
+        .container {
+            min-height: 100vh;
+            width: 100vw;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-size: cover;
+            background-position: center;
+            position: absolute; 
+            top: 0;
+            left: 0;
+            opacity: 0;
+            transition: opacity 1.5s ease-in-out;
+        }
+
+        .container.active {
+            opacity: 1; 
+        }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(92,64,51,0.6), rgba(165,105,79,0.4));
+        }
+
+        #slide1 { background-image: url('https://source.unsplash.com/1080x1920/?brown+flowers'); }
+        #slide2 { background-image: url('https://source.unsplash.com/1080x1920/?coffee+beans'); }
+        #slide3 { background-image: url('https://source.unsplash.com/1080x1920/?chocolate+heart'); }
+
+        .content {
+            position: relative;
+            z-index: 1;
+            max-width: 90%;
+            padding: 40px;
+            text-align: center;
+            background: rgba(244, 233, 216, 0.95);
+            border-radius: 30px;
+            box-shadow: 0 0 50px rgba(92,64,51,0.3);
+            border: 3px solid #a67b5b;
+            transform: scale(0);
+            animation: scaleIn 1s forwards;
+        }
+
+        @keyframes scaleIn {
+            to { transform: scale(1); }
+        }
+
+        h1 {
+            font-size: 4.5rem;
+            margin-bottom: 30px;
+            color: #8b5a2b;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            animation: float 3s ease-in-out infinite;
+        }
+
+        p {
+            font-size: 2.2rem;
+            margin-bottom: 40px;
+            line-height: 1.8;
+            color: #5c4033;
+        }
+
+        .button {
+            background: #a67b5b;
+            color: white;
+            padding: 30px 60px;
+            border: none;
+            border-radius: 40px;
+            font-size: 2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 25px rgba(166,123,91,0.4);
+            font-family: 'Cairo', sans-serif;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transition: 0.5s;
+        }
+
+        .button:hover {
+            transform: scale(1.1);
+            background: #8b5a2b;
+        }
+
+        .button:hover::before {
+            left: 100%;
+        }
+
+        .hidden { display: none; }
+
+        .celebration {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 6rem;
+            text-align: center;
+            color: #8b5a2b;
+            background: rgba(244, 233, 216, 0.98);
+            padding: 50px;
+            border-radius: 30px;
+            box-shadow: 0 0 60px rgba(166,123,91,0.5);
+            border: 3px solid #a67b5b;
+            z-index: 1000;
+            animation: glow 2s infinite;
+        }
+
+        .stars {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 999;
+        }
+
+        .star {
+            position: absolute;
+            color: #8b5a2b;
+            font-size: 2rem;
+            animation: float 5s infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 30px #a67b5b; }
+            50% { box-shadow: 0 0 60px #8b5a2b; }
+        }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 3rem; }
+            p { font-size: 1.8rem; }
+            .button { padding: 25px 50px; font-size: 1.8rem; }
+            .celebration { font-size: 4rem; padding: 30px; }
+        }
+
+        .background-image {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://cdn.shopify.com/s/files/1/0565/7080/6458/files/1rose-pink-flowers-wallpaper-mural-plain.jpg?v=1654827944');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.3;
+            z-index: -1;
+        }
+
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #f4e9d8;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            transition: opacity 1s ease-in-out;
+        }
+
+        .loading-screen.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .loader {
+            border: 8px solid #a67b5b;
+            border-top: 8px solid #8b5a2b;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Marhey:wght@600&family=Cairo:wght@600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loader"></div>
+    </div>
+
+    <div class="background-image"></div>
+
+    <audio id="bgMusic" src="path/to/your/music.mp3" loop></audio>
+
+    <div class="container active" id="slide1">
+        <div class="content">
+            <h1> 🌒أزيك يا  </h1>
+            <p>معلش ع العبث ده والله بقى بس</p>
+            <p>...ممكن تكملي </p>
+            <button class="button" onclick="nextSlide(2)">كملي</button>
+        </div>
+    </div>
+
+    <div class="container" id="slide2">
+        <div class="content">
+            <h1>⬇⬇⬇</h1>
+            <p>عارف إن حصل مني كتير دايقك بسببي</p>
+            <p>بس انتي عارفة أكيد إن مش قاصد اعمل ده,وعارف انك مدايقة مني </p>
+            <button class="button" onclick="nextSlide(3)"> كملي </button>
+        </div>
+    </div>
+
+    <div class="container" id="slide3">
+        <div class="content">
+            <h1>🙂🙂🙂</h1>
+            <p>وعارف أني مليش أي حق في الي حصل وبجد انا مدايق من الي عملته </p>
+            <p>وازاي انا فكرت كدة فيكي بس بجد انا غلطت في ده اوي</p>
+            <button class="button" onclick="nextSlide(4)"> كملي </button>
+        </div>
+    </div>
+
+    <div class="container" id="slide4">
+        <div class="content">
+            <h1>😢</h1>
+            <p>وعارف أني كان المفروض اكون واخد بالي من كلامي  وما ابقاش دبش كدة </p>
+            <p>مش برر أي حاجة لأن فعلًا انا غلطت اوي</p>
+            <button class="button" onclick="nextSlide(5)"> كملي </button>
+        </div>
+    </div>
+
+    <div class="container" id="slide5">
+        <div class="content">
+            <h1>آسف على كل حاجة</h1>
+            <p>🙂مش مجرد إن بقولها وخلاص، بس بجد أنا أسف.
+                عارف إن الكلام مش دايماً كفاية، لكن بجد نادم على كل حاجة عملتها وخليتك متضايقة.
+                أتمنى بجد إنك متبقاش زعلانة مني، لأنك حد غالية جدًا بالنسبة لي</p>
+            <button class="button" onclick="celebrate()">سامحتيني😃</button>
+        </div>
+    </div>
+
+    <div id="celebration" class="hidden celebration">
+        ❤شكرًا أوي بجد يعم مش هيتكرر أي شيء شبه ده تاني ان شاء الله  <br>
+    </div>
+
+    <div class="stars" id="starsContainer"></div>
+
+    <script>
+        const loadingScreen = document.getElementById('loadingScreen');
+        setTimeout(() => {
+            loadingScreen.classList.add('hidden');
+            document.getElementById('slide1').classList.add('active');
+        }, 2500);
+
+        function nextSlide(slideNumber) {
+            const currentSlide = document.querySelector('.container.active');
+            const nextSlide = document.getElementById(`slide${slideNumber}`);
+
+            if (currentSlide) {
+                currentSlide.classList.remove('active');
+                setTimeout(() => {
+                    nextSlide.classList.add('active');
+                }, 500); 
+            }
+        }
+
+        function celebrate() {
+            const music = document.getElementById('bgMusic');
+            music.play();
+
+            document.querySelectorAll('.container').forEach(el => el.classList.remove('active'));
+            document.getElementById('celebration').classList.remove('hidden');
+
+            createStars();
+            setInterval(createStars, 300);
+
+            confetti({
+                particleCount: 200,
+                spread: 120,
+                origin: { y: 0.6 },
+                colors: ['#8b5a2b', '#a67b5b', '#5c4033']
+            });
+        }
+
+        function createStars() {
+            const star = document.createElement('div');
+            star.innerHTML = '✨';
+            star.className = 'star';
+            star.style.left = Math.random() * 100 + '%';
+            star.style.animationDuration = Math.random() * 5 + 3 + 's';
+            star.style.fontSize = Math.random() * 3 + 2 + 'rem';
+            document.getElementById('starsContainer').appendChild(star);
+
+            setTimeout(() => star.remove(), 8000);
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.4.0/dist/confetti.browser.min.js"></script>
+</body>
+</html>
